@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequestMapping("/api/books")
 @RestController
 public class BookController {
 
@@ -27,13 +28,13 @@ public class BookController {
         ));
     }
 
-    @GetMapping("/api/books")
+    @GetMapping()
     public List<Book> getBooks(){
         return books;
     }
 
 
-    @GetMapping("/api/books/forloop/{title}")
+    @GetMapping("/forloop/{title}")
     public Book getBookByTitleForLoop(@PathVariable String title){
 
         for(Book book: books){
@@ -45,7 +46,7 @@ public class BookController {
 
     }
 
-    @GetMapping("/api/books/{title}")
+    @GetMapping("/{title}")
     public Book getBookByTitle(@PathVariable String title){
 
         return books.stream().filter(myBook -> myBook.getTitle().equalsIgnoreCase(title))
@@ -54,7 +55,7 @@ public class BookController {
 
     }
 
-    @GetMapping("/api/books/byCatForLoop")
+    @GetMapping("/byCatForLoop")
     public List<Book> getBookByCategoryForLoop(@RequestParam(required = false) String category){
 
         List<Book> bookListCat = new ArrayList<>();
@@ -72,7 +73,7 @@ public class BookController {
         return bookListCat;
     }
 
-    @GetMapping("/api/books/byCat")
+    @GetMapping("/byCat")
     public List<Book> getBookByCategory(@RequestParam(required = false) String category){
 
         if(category == null){
@@ -85,7 +86,7 @@ public class BookController {
 
     }
 
-    @GetMapping("/api/books/byCatTitle/{title}")
+    @GetMapping("/byCatTitle/{title}")
     public Book getBookByCategoryAndTitle(@PathVariable String title,
                                           @RequestParam(required = false) String category){
 
@@ -104,7 +105,7 @@ public class BookController {
         return null;
     }
 
-    @PostMapping("/api/books")
+    @PostMapping()
     public void createBook(@RequestBody Book newBook){
         for(Book book: books){
             if(book.getTitle().equalsIgnoreCase(newBook.getTitle())){
@@ -115,7 +116,7 @@ public class BookController {
     }
 
 
-    @PostMapping("/api/booksStream")
+    @PostMapping("/Stream")
     public void createBookStream(@RequestBody Book newBook){
         boolean isNewBook = books.stream()
                 .noneMatch(book -> book.getTitle().equalsIgnoreCase(newBook.getTitle()));
@@ -123,6 +124,21 @@ public class BookController {
         if(isNewBook){
             books.add(newBook);
         }
+    }
+
+    @PutMapping("/{title}")
+    public void updateBook(@PathVariable String title, @RequestBody Book updatedBook){
+        for(int i = 0; i < books.size(); i++){
+            if(books.get(i).getTitle().equalsIgnoreCase(title)){
+                books.set(i, updatedBook);
+                return;
+            }
+        }
+    }
+
+    @DeleteMapping("/{title}")
+    public void deleteBook(@PathVariable String title){
+        books.removeIf(book -> book.getTitle().equalsIgnoreCase(title));
     }
 
 
