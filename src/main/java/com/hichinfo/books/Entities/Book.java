@@ -1,14 +1,35 @@
 package com.hichinfo.books.Entities;
 
 public class Book {
+    private long id;
     private String title;
     private String author;
     private String category;
+    private int rate;
 
-    public Book(String title, String author, String category) {
+
+    public Book(long id, String title, String author, String category, int rate) {
+        this.id = id;
         this.title = title;
         this.author = author;
         this.category = category;
+        this.rate = rate;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public int getRate() {
+        return rate;
+    }
+
+    public void setRate(int rate) {
+        this.rate = rate;
     }
 
     public String getTitle() {
