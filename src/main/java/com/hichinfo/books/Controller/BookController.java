@@ -1,6 +1,7 @@
 package com.hichinfo.books.Controller;
 
 import com.hichinfo.books.Entities.Book;
+import com.hichinfo.books.request.BookRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -49,36 +50,21 @@ public class BookController {
 
 
     @PostMapping
-    public void createBook(@RequestBody Book bookRequest){
+    public void createBook(@RequestBody BookRequest bookRequest){
 
         long id = books.isEmpty() ?  1 : books.get(books.size() - 1).getId() + 1;
-
-        /*if(books.isEmpty()){
-            id = 1;
-        } else {
-            id = books.get(books.size() - 1).getId() + 1;
-
-        }*/
 
         books.add(convertToBook(id, bookRequest));
     }
 
-    private Book convertToBook(long id, Book bookRequest){
 
-        return new Book(
-                id,
-                bookRequest.getTitle(),
-                bookRequest.getAuthor(),
-                bookRequest.getCategory(),
-                bookRequest.getRate()
-        );
-
-    }
 
     @PutMapping("/{id}")
-    public void updateBook(@PathVariable long id, @RequestBody Book updatedBook){
+    public void updateBook(@PathVariable long id, @RequestBody BookRequest bookRequest){
+
         for(int i = 0; i < books.size(); i++){
             if(books.get(i).getId() == id){
+                Book updatedBook = convertToBook(id, bookRequest);
                 books.set(i, updatedBook);
                 return;
             }
@@ -88,6 +74,19 @@ public class BookController {
     @DeleteMapping("/{id}")
     public void deleteBook(@PathVariable long id){
         books.removeIf(book -> book.getId() == id);
+    }
+
+
+    private Book convertToBook(long id, BookRequest bookRequest){
+
+        return new Book(
+                id,
+                bookRequest.getTitle(),
+                bookRequest.getAuthor(),
+                bookRequest.getCategory(),
+                bookRequest.getRate()
+        );
+
     }
 
 
