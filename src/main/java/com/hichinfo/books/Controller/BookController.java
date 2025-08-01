@@ -49,13 +49,30 @@ public class BookController {
 
 
     @PostMapping
-    public void createBook(@RequestBody Book newBook){
-        boolean isNewBook = books.stream()
-                .noneMatch(book -> book.getTitle().equalsIgnoreCase(newBook.getTitle()));
+    public void createBook(@RequestBody Book bookRequest){
 
-        if(isNewBook){
-            books.add(newBook);
-        }
+        long id = books.isEmpty() ?  1 : books.get(books.size() - 1).getId() + 1;
+
+        /*if(books.isEmpty()){
+            id = 1;
+        } else {
+            id = books.get(books.size() - 1).getId() + 1;
+
+        }*/
+
+        books.add(convertToBook(id, bookRequest));
+    }
+
+    private Book convertToBook(long id, Book bookRequest){
+
+        return new Book(
+                id,
+                bookRequest.getTitle(),
+                bookRequest.getAuthor(),
+                bookRequest.getCategory(),
+                bookRequest.getRate()
+        );
+
     }
 
     @PutMapping("/{id}")
