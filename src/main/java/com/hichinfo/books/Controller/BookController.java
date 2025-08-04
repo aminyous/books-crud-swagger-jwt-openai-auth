@@ -1,6 +1,8 @@
 package com.hichinfo.books.Controller;
 
 import com.hichinfo.books.Entities.Book;
+import com.hichinfo.books.exception.BookErrorResponse;
+import com.hichinfo.books.exception.BookNotFoundException;
 import com.hichinfo.books.request.BookRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -65,7 +68,7 @@ public class BookController {
         return books.stream()
                 .filter(myBook -> myBook.getId() == id)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new BookNotFoundException("Book not found -  " + id));
 
     }
 
@@ -114,6 +117,17 @@ public class BookController {
                 bookRequest.getRate()
         );
 
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<BookErrorResponse> handleException(BookNotFoundException exc){
+        BookErrorResponse bookErrorResponse = new BookErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                exc.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(bookErrorResponse, HttpStatus.NOT_FOUND);
     }
 
 
